@@ -6,6 +6,7 @@
   "author": "Gabriel Rodrigues <gabers357@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.20.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "nodemon": "^3.1.4"
