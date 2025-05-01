@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧩 todoist-sync-bot
 
-## Getting Started
+[![Deploy on Vercel](https://vercelbadge.vercel.app/api/ApenasGabs/todoist-sync-bot)](https://todoist-sync-bot.vercel.app)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Issues](https://img.shields.io/github/issues/ApenasGabs/todoist-sync-bot)](https://github.com/ApenasGabs/todoist-sync-bot/issues)
+[![Stars](https://img.shields.io/github/stars/ApenasGabs/todoist-sync-bot?style=social)](https://github.com/ApenasGabs/todoist-sync-bot)
+[![Forks](https://img.shields.io/github/forks/ApenasGabs/todoist-sync-bot?style=social)](https://github.com/ApenasGabs/todoist-sync-bot/fork)
+[![GitHub](https://img.shields.io/github/license/ApenasGabs/todoist-sync-bot)](LICENSE)
+[![LivePix - Apoie este projeto](https://img.shields.io/badge/💖%20Apoie-via%20LivePix-ff69b4?style=flat-square)](https://livepix.gg/apenasgabs)
 
-First, run the development server:
+## 📝 Descrição
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Crie tarefas automaticamente no [Todoist](https://todoist.com) a partir de issues abertas em repositórios GitHub – simples, rápido e gratuito. Ideal para quem quer integrar planejamento pessoal com fluxo de desenvolvimento.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ O que ele faz?
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Quando uma issue é aberta em um repositório GitHub conectado, o bot cria automaticamente uma tarefa no seu Todoist com:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- O título da issue (como nome da tarefa)
+- O corpo da issue (como descrição da tarefa)
+- Um link direto para a issue
+- Uma label `GitHub` para organização
 
-## Learn More
+## 🚀 Deploy rápido com Vercel
 
-To learn more about Next.js, take a look at the following resources:
+1. **Clone o repositório:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   git clone https://github.com/ApenasGabs/todoist-sync-bot.git
+   cd todoist-sync-bot
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Configure as variáveis de ambiente:**
 
-## Deploy on Vercel
+   Na Vercel ou localmente (`.env.local`):
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```
+   GITHUB_WEBHOOK_SECRET=uma-senha-secreta
+   TODOIST_API_KEY=sua-chave-do-todoist
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   - [Consiga sua chave de API do Todoist aqui](https://developer.todoist.com/rest/v2/#authentication).
+
+3. **Crie um webhook no GitHub:**
+
+   No repositório que deseja integrar:
+   - Vá em **Settings > Webhooks**
+   - URL: `https://seu-projeto.vercel.app/github-webhook`
+   - Content type: `application/json`
+   - Secret: a mesma que está em `GITHUB_WEBHOOK_SECRET`
+   - Evento: selecione **Issues** (ou “Let me select individual events” e marque “Issues”)
+
+4. **Pronto!** Sempre que uma issue for aberta, uma task será criada no seu Todoist 🎯
+
+## 🛠 Tecnologias usadas
+
+- [Next.js 14](https://nextjs.org/)
+- API Routes com `app/` directory (v3 routing)
+- TypeScript
+- Deploy na [Vercel](https://vercel.com/)
+- Integração com [Todoist REST API v2](https://developer.todoist.com/rest/v2/)
+
+## 🤝 Contribuição
+
+Este projeto é open-source e gratuito para todos. Se quiser sugerir melhorias ou corrigir algo, fique à vontade para abrir uma issue ou um PR.
+
+## 📄 Licença
+
+MIT — use como quiser 🙌
+
+---
+
+Feito com 💛 por [@ApenasGabs](https://github.com/ApenasGabs)
