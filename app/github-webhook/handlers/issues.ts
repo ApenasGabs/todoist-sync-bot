@@ -25,7 +25,10 @@ export const handleIssueOpened = async (event: GitHubIssueEvent) => {
   });
 
   if (!response.ok) {
-    console.error("Erro ao criar task:", await response.text());
+    const errorText = await response.text();
+    console.error("[Todoist] Falha ao criar task:", errorText);
     throw new Error("Falha ao criar task");
   }
-};
+
+  console.log("[Todoist] Task criada com sucesso");
+}

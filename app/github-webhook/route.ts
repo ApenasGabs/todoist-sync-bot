@@ -22,19 +22,26 @@ export async function POST(req: NextRequest) {
   const eventName = req.headers.get("x-github-event") || "";
   const buf = await buffer(req);
 
+  console.log("[Webhook] Evento recebido:", eventName);
+
   if (!verifySignature(buf, sig)) {
+    console.warn("[Webhook] Assinatura inválida");
     return new Response(JSON.stringify({ error: "Assinatura inválida" }), {
       status: 401,
     });
   }
 
   const event = JSON.parse(buf.toString());
+  console.log("[Webhook] Payload:", JSON.stringify(event, null, 2));
 
   try {
     switch (eventName) {
       case "issues":
         if (event.action === "opened") {
+          console.log("[Webhook] Issue criada:", event.issue.title);
           await handleIssueOpened(event);
+        } else {
+          console.log("[Webhook] Ação de issue ignorada:", event.action);
         }
         break;
 
@@ -44,14 +51,14 @@ export async function POST(req: NextRequest) {
       //   break;
 
       default:
-        console.log("Evento ignorado:", eventName);
+        console.log("[Webhook] Evento não tratado:", eventName);
     }
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
     });
   } catch (err) {
-    console.error(err);
+    console.error("[Webhook] Erro ao processar evento:", err);
     return new Response(JSON.stringify({ error: "Erro interno" }), {
       status: 500,
     });
