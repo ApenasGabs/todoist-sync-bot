@@ -20,6 +20,22 @@ Quando uma issue é aberta em um repositório GitHub conectado, o bot cria autom
 - O corpo da issue (como descrição da tarefa)
 - Um link direto para a issue
 - Uma label `GitHub` para organização
+  
+## ⚙️ Como usar sem fazer deploy (usando o GitHub App)
+
+Você pode usar essa integração **sem clonar nada ou fazer deploy manual**. Basta:
+
+1. **Instalar o GitHub App**:
+
+   👉 [Clique aqui para instalar o todoist-sync-bot](https://github.com/apps/todoist-sync-bot/installations/new)
+
+2. **Configurar sua chave do Todoist**:
+
+   Após instalar, o app tentará enviar as tarefas para o seu Todoist. Para isso funcionar, você precisa fornecer sua chave de API do Todoist.
+
+   Hoje, como a versão pública não possui interface de configuração, você pode:
+   - Fazer seu próprio deploy (veja abaixo) com sua própria `TODOIST_API_KEY`
+   - Ou abrir uma [issue](https://github.com/ApenasGabs/todoist-sync-bot/issues/new) com sugestões sobre como quer autenticar sua conta Todoist
 
 ## 🚀 Deploy rápido com Vercel
 
