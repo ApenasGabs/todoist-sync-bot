@@ -1,23 +1,11 @@
-import crypto from "crypto";
+import { NextRequest } from "next/server";
+import { handleIssueOpened } from "./handlers/issues";
+import { verifySignature } from "./utils/verify-signature";
 
-interface GitHubIssueEvent {
-  action: string;
-  issue: {
-    title: string;
-    html_url: string;
-    body?: string;
-  };
-  repository: {
-    name: string;
-  };
-}
-
-// Utilitário para ler o corpo como buffer
-
-async function buffer(readable: Request) {
+async function buffer(req: Request): Promise<Buffer> {
+  const reader = req.body?.getReader();
   const chunks = [];
 
-  const reader = readable.body?.getReader();
   if (!reader) return Buffer.from([]);
 
   while (true) {
@@ -25,61 +13,47 @@ async function buffer(readable: Request) {
     if (done) break;
     chunks.push(value);
   }
+
   return Buffer.concat(chunks);
 }
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
 
-export async function POST(req: Request) {
-  const buf = await buffer(req);
+export async function POST(req: NextRequest) {
   const sig = req.headers.get("x-hub-signature-256");
+  const eventName = req.headers.get("x-github-event") || "";
+  const buf = await buffer(req);
 
-  const hmac = crypto.createHmac("sha256", process.env.GITHUB_WEBHOOK_SECRET!);
-  const digest = "sha256=" + hmac.update(buf).digest("hex");
-
-  if (sig !== digest) {
+  if (!verifySignature(buf, sig)) {
     return new Response(JSON.stringify({ error: "Assinatura inválida" }), {
       status: 401,
     });
   }
 
-  const event: GitHubIssueEvent = JSON.parse(buf.toString());
+  const event = JSON.parse(buf.toString());
 
-  if (
-    req.headers.get("x-github-event") === "issues" &&
-    event.action === "opened"
-  ) {
-    try {
-      const response = await fetch("https://api.todoist.com/rest/v2/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.TODOIST_API_KEY}`,
-        },
-        body: JSON.stringify({
-          content: `[${event.repository.name}] ${event.issue.title}`,
-          description: `${event.issue.body || ""}\n\nLink: ${
-            event.issue.html_url
-          }`,
-          labels: ["GitHub"],
-        }),
-      });
+  try {
+    switch (eventName) {
+      case "issues":
+        if (event.action === "opened") {
+          await handleIssueOpened(event);
+        }
+        break;
 
-      if (!response.ok) throw new Error("Falha ao criar task");
+      // Futuro: outros eventos
+      // case "pull_request":
+      //   if (event.action === "opened") await handlePullRequestOpened(event);
+      //   break;
 
-      return new Response(JSON.stringify({ success: true }), {
-        status: 200,
-      });
-    } catch (error) {
-      console.error(error);
-      return new Response(JSON.stringify({ error: "Erro interno" }), {
-        status: 500,
-      });
+      default:
+        console.log("Evento ignorado:", eventName);
     }
-  }
 
-  return new Response(null, { status: 200 });
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+    });
+  } catch (err) {
+    console.error(err);
+    return new Response(JSON.stringify({ error: "Erro interno" }), {
+      status: 500,
+    });
+  }
 }
