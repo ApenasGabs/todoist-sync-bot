@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { handleIssueOpened } from "./handlers/issues";
+import { handlePullRequestOpened } from "./handlers/pull-request";
 import { verifySignature } from "./utils/verify-signature";
 
 async function buffer(req: Request): Promise<Buffer> {
@@ -45,10 +46,17 @@ export async function POST(req: NextRequest) {
         }
         break;
 
-      // Futuro: outros eventos
-      // case "pull_request":
-      //   if (event.action === "opened") await handlePullRequestOpened(event);
-      //   break;
+      case "pull_request":
+        if (event.action === "opened") {
+          console.log(
+            "[Webhook] Pull Request criado:",
+            event.pull_request.title
+          );
+          await handlePullRequestOpened(event);
+        } else {
+          console.log("[Webhook] Ação de pull request ignorada:", event.action);
+        }
+        break;
 
       default:
         console.log("[Webhook] Evento não tratado:", eventName);
